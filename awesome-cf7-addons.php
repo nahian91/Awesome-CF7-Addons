@@ -19,6 +19,8 @@ require_once plugin_dir_path(__FILE__) . 'pages/reports.php';
 require_once plugin_dir_path(__FILE__) . 'pages/import-export.php';
 require_once plugin_dir_path(__FILE__) . 'pages/settings.php';
 
+require_once plugin_dir_path(__FILE__) . 'inc/assets.php';
+
 // Include Elementor widget
 if (defined('ELEMENTOR_PATH')) {
     require_once plugin_dir_path(__FILE__) . 'elementor/cf7-form-widget.php';
@@ -50,35 +52,4 @@ function acf7a_add_admin_menu() {
 
     // Settings at the bottom
     add_submenu_page('acf7a-general', 'Settings', 'Settings', 'manage_options', 'acf7a-settings', 'acf7a_settings_page');
-}
-
-// Enqueue assets
-add_action('admin_enqueue_scripts', 'acf7a_admin_assets');
-function acf7a_admin_assets($hook) {
-    $screens = [
-        'toplevel_page_acf7a-general',
-        'awesome-cf7-addons_page_acf7a-analytics',
-        'awesome-cf7-addons_page_acf7a-submission',
-        'awesome-cf7-addons_page_acf7a-reports',
-        'awesome-cf7-addons_page_acf7a-import-export'
-    ];
-    if (!in_array($hook, $screens)) return;
-
-    wp_enqueue_style('acf7a-admin-css', plugin_dir_url(__FILE__) . 'assets/admin.css');
-    wp_enqueue_script('acf7a-admin-js', plugin_dir_url(__FILE__) . 'assets/admin.js', ['jquery'], null, true);
-}
-
-// Settings API
-add_action('admin_init', 'acf7a_register_settings');
-function acf7a_register_settings() {
-    register_setting('acf7a_general_settings', 'acf7a_options');
-    add_settings_section('acf7a_general_section', 'General Settings', null, 'acf7a_general_settings');
-    add_settings_field('enable_analytics', 'Enable Analytics', 'acf7a_enable_analytics_cb', 'acf7a_general_settings', 'acf7a_general_section');
-}
-
-function acf7a_enable_analytics_cb() {
-    $options = get_option('acf7a_options');
-    ?>
-    <input type="checkbox" name="acf7a_options[enable_analytics]" value="1" <?php checked(1, isset($options['enable_analytics']) ? $options['enable_analytics'] : 0); ?> />
-    <?php
 }
